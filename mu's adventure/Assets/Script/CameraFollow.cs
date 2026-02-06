@@ -1,30 +1,30 @@
 using UnityEngine;
 
 /// <summary>
-/// 视角摄像机跟随脚本。挂到 Main Camera 上，指定要跟随的目标即可。
-/// 支持 2D（只跟 XY）和 3D（跟 XYZ），可调平滑度与偏移。
+/// Camera follow script. Attach to Main Camera and assign the target to follow.
+/// Supports 2D (XY only) and 3D (XYZ), with adjustable smoothness and offset.
 /// </summary>
 public class CameraFollow : MonoBehaviour
 {
-    [Header("跟随目标")]
-    [Tooltip("要跟随的物体（如玩家、画布中心等），不填则不会移动")]
+    [Header("Target")]
+    [Tooltip("Object to follow (e.g. player, canvas center). Leave empty to disable movement.")]
     public Transform target;
 
-    [Header("跟随模式")]
-    [Tooltip("勾选则只在 XY 平面跟随（2D 游戏）；不勾选则 XYZ 全跟随（3D）")]
+    [Header("Follow Mode")]
+    [Tooltip("If checked, follow on XY plane only (2D). If unchecked, follow XYZ (3D).")]
     public bool follow2D = true;
 
-    [Header("偏移")]
-    [Tooltip("摄像机相对目标的位置偏移")]
+    [Header("Offset")]
+    [Tooltip("Camera position offset relative to target.")]
     public Vector3 offset = new Vector3(0f, 0f, -10f);
 
-    [Header("平滑")]
-    [Tooltip("跟随平滑度，越大跟得越紧，越小越平滑")]
+    [Header("Smoothing")]
+    [Tooltip("Follow smoothness. Higher = snappier, lower = smoother.")]
     [Range(1f, 30f)]
     public float smoothSpeed = 10f;
 
-    [Header("边界（可选）")]
-    [Tooltip("是否限制摄像机在矩形范围内移动")]
+    [Header("Bounds (Optional)")]
+    [Tooltip("Clamp camera movement within a rectangle.")]
     public bool useBounds = false;
     public float minX = -100f, maxX = 100f;
     public float minY = -100f, maxY = 100f;
@@ -40,7 +40,7 @@ public class CameraFollow : MonoBehaviour
 
         if (follow2D)
         {
-            targetPosition.z = transform.position.z; // 保持摄像机自身 Z
+            targetPosition.z = transform.position.z; // Keep camera Z
         }
 
         Vector3 smoothed = Vector3.SmoothDamp(
@@ -60,7 +60,7 @@ public class CameraFollow : MonoBehaviour
     }
 
     /// <summary>
-    /// 运行时切换跟随目标
+    /// Change follow target at runtime.
     /// </summary>
     public void SetTarget(Transform newTarget)
     {
