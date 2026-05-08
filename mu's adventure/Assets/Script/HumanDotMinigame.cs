@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class HumanDotMinigame : MonoBehaviour
 {
+    public float successShowTime = 1.5f;
+    public string successMessage = "You success";
+    
     [Header("Rotate")]
     public RectTransform humanPivot;          // HumanPivot（UI）
     public float speedDegPerSec = 360f;
