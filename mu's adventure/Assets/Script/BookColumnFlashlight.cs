@@ -13,11 +13,12 @@ public class BookColumnFlashlight : MonoBehaviour
     private SpriteRenderer _sr;
     private Material _mat;
     private Camera _cam;
+    private Vector3 _frozenPos;
 
-    static readonly int LightWorldPos = Shader.PropertyToID("_LightWorldPos");
-    static readonly int LightRadius   = Shader.PropertyToID("_LightRadius");
-    static readonly int LightSoftness = Shader.PropertyToID("_LightSoftness");
-    static readonly int LightActive   = Shader.PropertyToID("_LightActive");
+    static readonly int LightWorldPos  = Shader.PropertyToID("_LightWorldPos");
+    static readonly int LightRadius    = Shader.PropertyToID("_LightRadius");
+    static readonly int LightSoftness  = Shader.PropertyToID("_LightSoftness");
+    static readonly int LightActive    = Shader.PropertyToID("_LightActive");
     static readonly int DarknessFactor = Shader.PropertyToID("_DarknessFactor");
 
     void Start()
@@ -26,8 +27,10 @@ public class BookColumnFlashlight : MonoBehaviour
         _mat = _sr.material;
         _cam = Camera.main;
 
-        // Push initial uniform values so the shader starts fully dark
-        _mat.SetFloat(LightActive,    0f);
+        // Start frozen at the sprite center so the circle doesn't jump on first entry
+        _frozenPos = transform.position;
+
+        _mat.SetFloat(LightActive,    1f);
         _mat.SetFloat(LightRadius,    lightRadius);
         _mat.SetFloat(LightSoftness,  edgeSoftness);
         _mat.SetFloat(DarknessFactor, darknessFactor);
@@ -36,19 +39,19 @@ public class BookColumnFlashlight : MonoBehaviour
     void Update()
     {
         Vector3 screenPos = Input.mousePosition;
-        // Z depth: distance from camera to the sprite plane (camera is at z=-10, sprite at z=0)
         screenPos.z = Mathf.Abs(_cam.transform.position.z);
         Vector3 worldPos = _cam.ScreenToWorldPoint(screenPos);
 
-        // Check if mouse is over this sprite's world bounds (ignore Z)
         Bounds b = _sr.bounds;
         bool over = worldPos.x >= b.min.x && worldPos.x <= b.max.x
                  && worldPos.y >= b.min.y && worldPos.y <= b.max.y;
 
-        _mat.SetVector(LightWorldPos, new Vector4(worldPos.x, worldPos.y, 0f, 0f));
-        _mat.SetFloat(LightActive,    over ? 1f : 0f);
+        // Only advance the light position while the mouse is inside the sprite
+        if (over)
+            _frozenPos = worldPos;
 
-        // Keep these in sync if tweaked at runtime in the Inspector
+        _mat.SetVector(LightWorldPos, new Vector4(_frozenPos.x, _frozenPos.y, 0f, 0f));
+        _mat.SetFloat(LightActive,    1f);
         _mat.SetFloat(LightRadius,    lightRadius);
         _mat.SetFloat(LightSoftness,  edgeSoftness);
         _mat.SetFloat(DarknessFactor, darknessFactor);
