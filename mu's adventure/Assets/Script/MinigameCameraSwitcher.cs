@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class MinigameCameraSwitcher : MonoBehaviour
 {
+    private static MinigameCameraSwitcher activeMinigame;
+    public static bool IsAnyMinigameActive => activeMinigame != null;
     [Header("Refs")]
     public CameraFollow cameraFollow;        // 你现有的相机跟随脚本
     public Transform playerTarget;           // 玩家Transform
@@ -39,6 +41,7 @@ public class MinigameCameraSwitcher : MonoBehaviour
 
     void Update()
     {
+        if (FileUIManager.IsInputBlocked) return;
         // 1) 在小游戏里，ESC 退出（必须放在最前面，且不能被 return 挡住）
         if (inMinigame)
         {
@@ -60,6 +63,8 @@ public class MinigameCameraSwitcher : MonoBehaviour
 
     public void EnterMinigame()
     {
+        if (FileUIManager.IsInputBlocked || IsAnyMinigameActive) return;
+        activeMinigame = this;
         inMinigame = true;
 
         if (rouletteRoot != null) rouletteRoot.SetActive(true);
@@ -78,6 +83,8 @@ public class MinigameCameraSwitcher : MonoBehaviour
 
     public void ExitMinigame()
     {
+        if (!inMinigame) return;
+        if (activeMinigame == this) activeMinigame = null;
         inMinigame = false;
 
         if (rouletteRoot != null) rouletteRoot.SetActive(false);
@@ -92,6 +99,11 @@ public class MinigameCameraSwitcher : MonoBehaviour
             foreach (var mb in disableWhileMinigame)
                 if (mb != null) mb.enabled = true;
         }
+    }
+
+    private void OnDisable()
+    {
+        if (inMinigame) ExitMinigame();
     }
 
     // 给轮盘脚本调用：成功时退出

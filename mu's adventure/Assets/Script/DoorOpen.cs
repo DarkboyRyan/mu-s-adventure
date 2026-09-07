@@ -22,6 +22,7 @@ public class DoorOpen : MonoBehaviour
 
     void Update()
     {
+        if (FileUIManager.IsInputBlocked) return;
         if (opened) return;
         if (player == null) return;
         if (!isLocked && Vector3.Distance(player.position, transform.position) <= interactRange)

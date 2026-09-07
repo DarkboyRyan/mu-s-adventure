@@ -40,6 +40,7 @@ public class HumanDotMinigame : MonoBehaviour
 
     void Update()
     {
+        if (FileUIManager.IsInputBlocked) return;
         if (cleared) return;
         if (humanPivot == null) return;
 

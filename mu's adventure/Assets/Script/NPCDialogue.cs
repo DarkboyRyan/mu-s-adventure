@@ -18,6 +18,7 @@ public class NPCDialogue : MonoBehaviour
 
     void Update()
     {
+        if (FileUIManager.IsInputBlocked) return;
         if (!playerInRange || dialogueUI == null) return;
 
         if (Input.GetKeyDown(KeyCode.E))

@@ -32,6 +32,7 @@ public class ChairButton : MonoBehaviour
 
     void Update()
     {
+        if (FileUIManager.IsInputBlocked) return;
         if (_alreadyTriggered || !_playerInRange || chair == null) return;
         if (!Input.GetKeyDown(interactKey)) return;
 

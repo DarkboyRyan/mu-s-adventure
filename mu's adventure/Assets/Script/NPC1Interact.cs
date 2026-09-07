@@ -35,6 +35,7 @@ public class NPC1Interact : MonoBehaviour
 
     void Update()
     {
+        if (FileUIManager.IsInputBlocked) return;
         if (!_playerInRange) return;
         if (!Input.GetKeyDown(interactKey)) return;
         if (PlayerStatus.Instance == null) return;

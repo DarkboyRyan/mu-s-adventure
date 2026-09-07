@@ -7,4 +7,7 @@ public class FileDocument : ScriptableObject
 
     [TextArea(5, 15)]
     public string[] pages;
+
+    public bool HasContent => pages != null &&
+        System.Array.Exists(pages, page => !string.IsNullOrWhiteSpace(page));
 }
